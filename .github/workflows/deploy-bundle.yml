@@ -1,10 +1,10 @@
 name: Deploy Databricks Bundle
 
-  on:
-    push:
-      branches: [DEV, UAT, main]
-      paths:
-        - 'DBA-pub-project_sdp/**'
+on:
+  push:
+    branches: [DEV, UAT, main]
+    paths:
+      - 'DBA-pub-project_sdp/**'
 
 jobs:
   deploy:
