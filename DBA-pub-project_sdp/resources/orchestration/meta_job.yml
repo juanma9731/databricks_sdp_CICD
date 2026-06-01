@@ -1,0 +1,60 @@
+resources:
+  jobs:
+    dba_meta_job:
+      name: "[${bundle.target}] DBA ETL Meta-Job"
+      description: >
+        Orchestrates all SDP pipelines sequentially. Sequential execution is required
+        due to free-tier compute quota limitations. Order: dimensions → ventas →
+        inventario → facturas → turnos.
+
+      tasks:
+        - task_key: run_dimensions
+          description: "Ingest all 9 dimension tables (bronze + silver SCD1)"
+          pipeline_task:
+            pipeline_id: ${resources.pipelines.dimensions_pipeline.id}
+            full_refresh: false
+          max_retries: 1
+          min_retry_interval_millis: 300
+
+        - task_key: run_ventas
+          description: "Ingest ventas fact table (bronze + silver)"
+          depends_on:
+            - task_key: run_dimensions
+          run_if: ALL_SUCCESS
+          pipeline_task:
+            pipeline_id: ${resources.pipelines.ventas_pipeline.id}
+            full_refresh: false
+
+        - task_key: run_inventario
+          description: "Ingest inventario fact table (bronze + silver)"
+          depends_on:
+            - task_key: run_ventas
+          run_if: ALL_SUCCESS
+          pipeline_task:
+            pipeline_id: ${resources.pipelines.inventario_pipeline.id}
+            full_refresh: false
+
+        - task_key: run_facturas
+          description: "Ingest facturas fact table (bronze + silver)"
+          depends_on:
+            - task_key: run_inventario
+          run_if: ALL_SUCCESS
+          pipeline_task:
+            pipeline_id: ${resources.pipelines.facturas_pipeline.id}
+            full_refresh: false
+
+        - task_key: run_turnos
+          description: "Ingest turnos fact table (bronze + silver)"
+          depends_on:
+            - task_key: run_facturas
+          run_if: ALL_SUCCESS
+          pipeline_task:
+            pipeline_id: ${resources.pipelines.turnos_pipeline.id}
+            full_refresh: false
+
+      permissions:
+        - level: CAN_VIEW
+          group_name: "users"
+
+      lifecycle:
+        prevent_destroy: true

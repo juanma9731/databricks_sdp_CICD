@@ -1,0 +1,73 @@
+bundle:
+  name: dba-pub-project-sdp
+
+include:
+  - resources/*.yml
+  - resources/dimensions/*.yml
+  - resources/fact/ventas/*.yml
+  - resources/fact/inventario/*.yml
+  - resources/fact/facturas/*.yml
+  - resources/fact/turnos/*.yml
+  - resources/orchestration/*.yml
+
+variables:
+  catalog_name:
+    description: "Target catalog for this environment"
+    default: "dba_pub_project_dev"
+  schema_bronze:
+    description: "Bronze layer schema name"
+    default: "bronze"
+  schema_silver:
+    description: "Silver layer schema name"
+    default: "silver"
+  schema_gold:
+    description: "Gold layer schema name (reserved, not yet implemented)"
+    default: "gold"
+  source_catalog:
+    description: "Source catalog containing raw data volumes"
+    default: "bundle_data_source"
+  source_schema:
+    description: "Schema in source catalog where volumes reside"
+    default: "default"
+
+targets:
+  dev:
+    default: true
+    mode: production
+    workspace:
+      profile: juanmaFE
+      host: https://dbc-1e29dc75-42e2.cloud.databricks.com
+      root_path: /Workspace/Users/juanma1397@gmail.com/.bundle/${bundle.name}/${bundle.target}
+    variables:
+      catalog_name: "dba_pub_project_dev"
+      schema_bronze: "bronze"
+      schema_silver: "silver"
+      schema_gold: "gold"
+      source_catalog: "bundle_data_source"
+      source_schema: "default"
+
+  uat:
+    mode: production
+    workspace:
+      profile: juanmaFE
+      host: https://dbc-1e29dc75-42e2.cloud.databricks.com
+      root_path: /Workspace/Users/juanma1397@gmail.com/.bundle/${bundle.name}/${bundle.target}
+    variables:
+      catalog_name: "dba_pub_project_uat"
+      schema_bronze: "bronze"
+      schema_silver: "silver"
+      schema_gold: "gold"
+      source_catalog: "bundle_data_source"
+      source_schema: "default"
+
+  prod:
+    mode: production
+    workspace:
+      profile: juanmaFE
+    variables:
+      catalog_name: "dba_pub_project_PROD"
+      schema_bronze: "bronze"
+      schema_silver: "silver"
+      schema_gold: "gold"
+      source_catalog: "bundle_data_source"
+      source_schema: "default"

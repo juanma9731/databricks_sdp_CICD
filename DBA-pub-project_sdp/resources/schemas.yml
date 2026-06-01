@@ -1,0 +1,19 @@
+resources:
+  schemas:
+    bronze_schema:
+      catalog_name: ${var.catalog_name}
+      name: ${var.schema_bronze}
+      comment: "Bronze layer — raw ingestion from source volumes. Append-only, no business logic."
+      properties:
+        layer: "bronze"
+        owner: "data-platform"
+
+    silver_schema:
+      catalog_name: ${var.catalog_name}
+      name: ${var.schema_silver}
+      comment: "Silver layer — cleaned, validated, and normalised data. Fact and dimension tables."
+      properties:
+        layer: "silver"
+        owner: "data-platform"
+      lifecycle:
+        prevent_destroy: true

@@ -1,0 +1,29 @@
+resources:
+  pipelines:
+    facturas_pipeline:
+      name: "[${bundle.target}] Facturas Fact Pipeline"
+
+      catalog: ${var.catalog_name}
+      target: ${var.schema_silver}
+
+      libraries:
+        - glob:
+            include: ../../../src/fact/facturas/**
+
+      serverless: true
+      continuous: false
+      channel: current
+
+      configuration:
+        bronze_catalog: ${var.catalog_name}
+        bronze_schema: ${var.schema_bronze}
+        silver_catalog: ${var.catalog_name}
+        silver_schema: ${var.schema_silver}
+        volume_path: /Volumes/${var.source_catalog}/${var.source_schema}/expenses
+
+      permissions:
+        - level: CAN_VIEW
+          group_name: "users"
+
+      lifecycle:
+        prevent_destroy: true
