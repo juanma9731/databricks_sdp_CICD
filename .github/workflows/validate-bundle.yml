@@ -1,34 +1,40 @@
-name: Validate Databricks Bundle
+name: Validate Databricks Bundle                                                                                                                                                                                   
+                                                                                                                                                                                                                   
+on:                                                                                                                                                                                                                
+    pull_request:
+      branches: [DEV, UAT, prod]                                                                                                                                                                                     
+      paths:                                                                                                                                                                                                       
+        - 'DBA-pub-project_sdp/**'
 
-on:
-  pull_request:
-    branches: [DEV, UAT, prod]
-    paths:
-      - 'DBA-pub-project_sdp/**'
+  jobs:
+    validate:
+      name: Validate Bundle
+      runs-on: ubuntu-latest
+      environment: ${{ github.base_ref }}
+      env:
+        DATABRICKS_HOST: ${{ secrets.DATABRICKS_HOST }}
+        DATABRICKS_TOKEN: ${{ secrets.DATABRICKS_TOKEN }}
+      steps:
+        - uses: actions/checkout@v4
 
-jobs:
-  validate:
-    name: Validate Bundle
-    runs-on: ubuntu-latest
-    environment: ${{ github.base_ref }}
-    env:
-      DATABRICKS_HOST: ${{ secrets.DATABRICKS_HOST }}
-      DATABRICKS_TOKEN: ${{ secrets.DATABRICKS_TOKEN }}
-    steps:
-      - uses: actions/checkout@v4
+        - name: Map branch to target
+          id: target
+          run: |
+            case "${{ github.base_ref }}" in
+              DEV)  echo "target=dev"  >> $GITHUB_OUTPUT ;;
+              UAT)  echo "target=uat"  >> $GITHUB_OUTPUT ;;
+              prod) echo "target=prod" >> $GITHUB_OUTPUT ;;
+            esac
 
-      - name: Map branch to target
-        id: target
-        run: |
-          case "${{ github.base_ref }}" in
-            DEV)  echo "target=dev"  >> $GITHUB_OUTPUT ;;
-            UAT)  echo "target=uat"  >> $GITHUB_OUTPUT ;;
-            prod) echo "target=prod" >> $GITHUB_OUTPUT ;;
-          esac
+        - name: Configure Databricks auth
+          run: |
+            echo "[DEFAULT]
+            host = ${{ secrets.DATABRICKS_HOST }}
+            token = ${{ secrets.DATABRICKS_TOKEN }}" > ~/.databrickscfg
 
-      - uses: databricks/setup-cli@main
+        - uses: databricks/setup-cli@main
 
-      - name: Validate bundle
-        run: |
-          cd DBA-pub-project_sdp
-          databricks bundle validate -t ${{ steps.target.outputs.target }}
+        - name: Validate bundle
+          run: |
+            cd DBA-pub-project_sdp
+            databricks bundle validate -t ${{ steps.target.outputs.target }}
