@@ -35,7 +35,6 @@ targets:
     default: true
     mode: production
     workspace:
-      profile: juanmaFE
       host: https://dbc-1e29dc75-42e2.cloud.databricks.com
       root_path: /Workspace/Users/juanma1397@gmail.com/.bundle/${bundle.name}/${bundle.target}
     variables:
@@ -49,7 +48,6 @@ targets:
   uat:
     mode: production
     workspace:
-      profile: juanmaFE
       host: https://dbc-1e29dc75-42e2.cloud.databricks.com
       root_path: /Workspace/Users/juanma1397@gmail.com/.bundle/${bundle.name}/${bundle.target}
     variables:
