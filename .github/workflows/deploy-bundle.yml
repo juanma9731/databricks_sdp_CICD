@@ -1,16 +1,17 @@
 name: Deploy Databricks Bundle
 
 on:
-   workflow_run:
-      workflows: ["Validate Databricks Bundle"]
-      types: [completed]
-      branches: [DEV, UAT, main]
+  push:
+    branches: [DEV, UAT, main]
+    paths:
+      - 'DBA-pub-project_sdp/**'
 
 jobs:
   deploy:
     name: Deploy Bundle
     runs-on: ubuntu-latest
-    environment: ${{ github.ref_name }}
+    environment: 
+      name: ${{ github.ref_name }}
     env:
       DATABRICKS_HOST: ${{ secrets.DATABRICKS_HOST }}
       DATABRICKS_TOKEN: ${{ secrets.DATABRICKS_TOKEN }}
