@@ -1,0 +1,34 @@
+name: Validate Databricks Bundle
+
+on:
+  pull_request:
+    branches: [dev, uat, prod]
+    paths:
+      - 'DBA-pub-project_sdp/**'
+
+jobs:
+  validate:
+    name: Validate Bundle
+    runs-on: ubuntu-latest
+    environment: ${{ github.base_ref }}
+    env:
+      DATABRICKS_HOST: ${{ secrets.DATABRICKS_HOST }}
+      DATABRICKS_TOKEN: ${{ secrets.DATABRICKS_TOKEN }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Map branch to target
+        id: target
+        run: |
+          case "${{ github.base_ref }}" in
+            dev)  echo "target=dev"  >> $GITHUB_OUTPUT ;;
+            uat)  echo "target=uat"  >> $GITHUB_OUTPUT ;;
+            prod) echo "target=prod" >> $GITHUB_OUTPUT ;;
+          esac
+
+      - uses: databricks/setup-cli@main
+
+      - name: Validate bundle
+        run: |
+          cd anaplan_asset_bundle_demo
+          databricks bundle validate -t ${{ steps.target.outputs.target }}
