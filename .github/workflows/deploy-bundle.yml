@@ -10,7 +10,7 @@ jobs:
   deploy:
     name: Deploy Bundle
     runs-on: ubuntu-latest
-    environment: DEV
+    environment: ${{ github.ref_name }}
     env:
       DATABRICKS_HOST: ${{ secrets.DATABRICKS_HOST }}
       DATABRICKS_TOKEN: ${{ secrets.DATABRICKS_TOKEN }}
