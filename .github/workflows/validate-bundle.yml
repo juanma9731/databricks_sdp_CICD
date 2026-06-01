@@ -2,7 +2,7 @@ name: Validate Databricks Bundle
 
 on:
   pull_request:
-    branches: [DEV, UAT, prod]
+    branches: [DEV, UAT, main]
     paths:
       - 'DBA-pub-project_sdp/**'
 
@@ -10,7 +10,7 @@ jobs:
   validate:
     name: Validate Bundle
     runs-on: ubuntu-latest
-    environment: ${{ github.base_ref }}
+    environment: DEV
     env:
       DATABRICKS_HOST: ${{ secrets.DATABRICKS_HOST }}
       DATABRICKS_TOKEN: ${{ secrets.DATABRICKS_TOKEN }}
@@ -21,10 +21,18 @@ jobs:
         id: target
         run: |
           case "${{ github.base_ref }}" in
-            dev)  echo "target=dev"  >> $GITHUB_OUTPUT ;;
-            uat)  echo "target=uat"  >> $GITHUB_OUTPUT ;;
-            prod) echo "target=prod" >> $GITHUB_OUTPUT ;;
+            DEV)  echo "target=dev"  >> $GITHUB_OUTPUT ;;
+            UAT)  echo "target=uat"  >> $GITHUB_OUTPUT ;;
+            main) echo "target=prod" >> $GITHUB_OUTPUT ;;
           esac
+
+      - name: Configure Databricks auth
+        run: |
+          cat > ~/.databrickscfg << EOF
+          [DEFAULT]
+          host = ${{ secrets.DATABRICKS_HOST }}
+          token = ${{ secrets.DATABRICKS_TOKEN }}
+          EOF
 
       - uses: databricks/setup-cli@main
 
