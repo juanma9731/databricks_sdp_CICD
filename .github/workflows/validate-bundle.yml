@@ -21,8 +21,8 @@ jobs:
         id: target
         run: |
           case "${{ github.base_ref }}" in
-            dev)  echo "target=dev"  >> $GITHUB_OUTPUT ;;
-            uat)  echo "target=uat"  >> $GITHUB_OUTPUT ;;
+            DEV)  echo "target=dev"  >> $GITHUB_OUTPUT ;;
+            UAT)  echo "target=uat"  >> $GITHUB_OUTPUT ;;
             prod) echo "target=prod" >> $GITHUB_OUTPUT ;;
           esac
 
