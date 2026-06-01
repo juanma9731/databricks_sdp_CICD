@@ -2,7 +2,7 @@ name: Deploy Databricks Bundle
 
 on:
   push:
-    branches: [dev, uat, prod]
+    branches: [DEV, UAT, prod]
     paths:
       - 'DBA-pub-project_sdp/**'
 
