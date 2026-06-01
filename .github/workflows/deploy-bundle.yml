@@ -1,0 +1,39 @@
+name: Deploy Databricks Bundle
+
+on:
+  push:
+    branches: [dev, uat, prod]
+    paths:
+      - 'DBA-pub-project_sdp/**'
+
+jobs:
+  deploy:
+    name: Deploy Bundle
+    runs-on: ubuntu-latest
+    environment: ${{ github.ref_name }}
+    env:
+      DATABRICKS_HOST: ${{ secrets.DATABRICKS_HOST }}
+      DATABRICKS_TOKEN: ${{ secrets.DATABRICKS_TOKEN }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Map branch to target
+        id: target
+        run: |
+          case "${{ github.ref_name }}" in
+            dev)  echo "target=dev"  >> $GITHUB_OUTPUT ;;
+            uat)  echo "target=uat"  >> $GITHUB_OUTPUT ;;
+            prod) echo "target=prod" >> $GITHUB_OUTPUT ;;
+          esac
+
+      - uses: databricks/setup-cli@main
+
+      - name: Validate before deploy
+        run: |
+          cd anaplan_asset_bundle_demo
+          databricks bundle validate -t ${{ steps.target.outputs.target }}
+
+      - name: Deploy bundle
+        run: |
+          cd anaplan_asset_bundle_demo
+          databricks bundle deploy -t ${{ steps.target.outputs.target }}
