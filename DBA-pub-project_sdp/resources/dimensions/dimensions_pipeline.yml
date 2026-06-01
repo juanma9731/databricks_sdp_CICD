@@ -1,7 +1,7 @@
 resources:
   pipelines:
     dimensions_pipeline:
-      name: "[${bundle.target}] Dimensions Pipeline15"
+      name: "[${bundle.target}] Dimensions Pipeline16"
 
       catalog: ${var.catalog_name}
       target: ${var.schema_silver}
