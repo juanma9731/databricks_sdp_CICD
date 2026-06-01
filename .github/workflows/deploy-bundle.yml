@@ -30,10 +30,10 @@ jobs:
 
       - name: Validate before deploy
         run: |
-          cd anaplan_asset_bundle_demo
+          cd DBA-pub-project_sdp
           databricks bundle validate -t ${{ steps.target.outputs.target }}
 
       - name: Deploy bundle
         run: |
-          cd anaplan_asset_bundle_demo
+          cd DBA-pub-project_sdp
           databricks bundle deploy -t ${{ steps.target.outputs.target }}
