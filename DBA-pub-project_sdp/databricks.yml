@@ -61,7 +61,6 @@ targets:
   prod:
     mode: production
     workspace:
-      profile: juanmaFE
     variables:
       catalog_name: "dba_pub_project_PROD"
       schema_bronze: "bronze"
