@@ -1,10 +1,10 @@
 name: Deploy Databricks Bundle
 
 on:
-  push:
-    branches: [DEV, UAT, main]
-    paths:
-      - 'DBA-pub-project_sdp/**'
+   workflow_run:
+      workflows: ["Validate Databricks Bundle"]
+      types: [completed]
+      branches: [DEV, UAT, main]
 
 jobs:
   deploy:
